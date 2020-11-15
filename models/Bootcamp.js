@@ -100,7 +100,10 @@ const BootcampSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  },
+  }
+}, {
+  toJSON: { virtuals: true },    //to add virtual fields
+  toObject: { virtuals: true}
 });
 
 //Create bootcamp slug from the name
@@ -129,6 +132,21 @@ BootcampSchema.pre("save", async function (next) {
   next();
 });
 
+//Cascade delete courses when a bootcamp is deleted
+BootcampSchema.pre('remove', async function(next) {
+  console.log(`Courses being removed`)
+  await this.model('Course').deleteMany({ bootcamp : this._id })    //Course.deleteMany({ bootcamp: this._id}), bootcamp=bootcampId
+  next()
+})
+
+//Reverse populate with viruals, now it has a courses virtual field, that can be populated
+BootcampSchema.virtual('courses', {
+  ref: 'Course',
+  localField: '_id',
+  foreignField: 'bootcamp',        //foreign key - key in 'course' collection, Bootcamp._id == Course.bootcamp
+  justOne: false                   //can map to many courses
+})
+
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
 
 //appreciate it,
@@ -140,3 +158,7 @@ module.exports = mongoose.model("Bootcamp", BootcampSchema);
 
 //Tip: Dont worry about memorising these stuff, just see what all possibilities, functionality mongoose has to offer
 //aise dekho
+
+
+//Relationships - when a resource gets delete, you would want to delete the resouces associated with it or
+ //coming out of it, Why would you want  to keep their courses, if institution doesnt exist

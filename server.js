@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require('path')
+const fileupload = require('express-fileupload')
 const dotenv = require("dotenv");   //install 
 const morgan = require("morgan");   //install 
 const colors = require('colors')   //install 
@@ -14,6 +16,7 @@ connectDB();
 
 //Route files
 const bootcampsRoute = require("./routes/bootcamps");
+const coursesRoute = require('./routes/courses')
 
 const app = express();
 
@@ -25,8 +28,15 @@ if (process.env.NODE_ENV == "development") {
   app.use(morgan("dev"));
 }
 
+//File uploading, file data parser
+app.use(fileupload())
+
+//Set static folder
+app.use(express.static(path.join(__dirname, 'public')))
+
 //Mount Routers
 app.use("/app/v1/bootcamps", bootcampsRoute);
+app.use("/app/v1/courses", coursesRoute)
 
 //errorHandler middleware Has to be below, the Router as Router ke next mei errorH ho --> router mei next(err) ho toh is middleware pe aaye
 app.use(errorHandler)
