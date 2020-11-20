@@ -102,7 +102,7 @@ const BootcampSchema = mongoose.Schema({
     default: Date.now,
   }
 }, {
-  toJSON: { virtuals: true },    //to add virtual fields
+  toJSON: { virtuals: true },    //to add virtual fields, footnote 1
   toObject: { virtuals: true}
 });
 
@@ -140,11 +140,11 @@ BootcampSchema.pre('remove', async function(next) {
 })
 
 //Reverse populate with viruals, now it has a courses virtual field, that can be populated
-BootcampSchema.virtual('courses', {
+BootcampSchema.virtual('courses', {   //Footnote 2
   ref: 'Course',
   localField: '_id',
-  foreignField: 'bootcamp',        //foreign key - key in 'course' collection, Bootcamp._id == Course.bootcamp
-  justOne: false                   //can map to many courses
+  foreignField: 'bootcamp',        //foreign key - key in 'course' collection
+  justOne: false                   //can map to multiple courses
 })
 
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
@@ -162,3 +162,14 @@ module.exports = mongoose.model("Bootcamp", BootcampSchema);
 
 //Relationships - when a resource gets delete, you would want to delete the resouces associated with it or
  //coming out of it, Why would you want  to keep their courses, if institution doesnt exist
+
+// 1. Apart from these specified fields, virtual fields can also be there
+//    Vitual fields are those which are nice to have on clientside, but do not get persisted to mongodb
+//    I dont need to have courses field in each bootcamp, (when I have already specified a relationship by storing bootcampId in courses model showing bootcamp it belongs to), when i can generate that field on the fly
+// 2. Simple hai, this is a virtual field, that will be generated in bootcamp on the fly, (fieldName, description) normal jaise hota h while defining model
+//    join kaise karenge dono model ko, yahan ka localfied match karao vahan ke 'bootcamp' se,  mongodb mei 'joins' aise karenge, ki appropriate courses apne bootcamps mei fill up hojae
+ 
+
+//Relationships between models, depends on kahani kya h
+// bw bootcamp and courses
+// bw user and bootcamp

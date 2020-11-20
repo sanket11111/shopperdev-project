@@ -1,0 +1,11 @@
+1.Error Handling, 
+  async error handling,( or even sync included)
+  using express inbuilt err handler, i.e, middlewares of this sort= (req, res, next, err) 
+  using next()
+  using ErrorResponse class to build error objects on the fly taking an errormessage and status code
+
+2. TO create efficient workflow and not doing pointless repititive stuff...helping yourself
+   postman, creating folders and saving requests, saving req headers, global variables
+    and retrrieving tokens that come along the response obj and saving them as well
+   seeder file helps alot to clear the data from database and enter fresh data into it in one second
+    

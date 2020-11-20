@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require('path')
 const fileupload = require('express-fileupload')
+const cookieParser = require('cookie-parser')
 const dotenv = require("dotenv");   //install 
 const morgan = require("morgan");   //install 
 const colors = require('colors')   //install 
@@ -17,11 +18,15 @@ connectDB();
 //Route files
 const bootcampsRoute = require("./routes/bootcamps");
 const coursesRoute = require('./routes/courses')
+const authRouter = require('./routes/auth')
 
 const app = express();
 
 //req body parser
 app.use(express.json())
+
+// Cookie parser
+app.use(cookieParser())
 
 //Dev logging middleware
 if (process.env.NODE_ENV == "development") {
@@ -37,6 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 //Mount Routers
 app.use("/app/v1/bootcamps", bootcampsRoute);
 app.use("/app/v1/courses", coursesRoute)
+app.use("/app/v1/auth", authRouter)
 
 //errorHandler middleware Has to be below, the Router as Router ke next mei errorH ho --> router mei next(err) ho toh is middleware pe aaye
 app.use(errorHandler)
